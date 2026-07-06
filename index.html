@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harsh Verdhan Singh — Full Stack &amp; Flutter Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0908;
+    --bg-soft: #0e0c09;
+    --panel: #131009;
+    --border: #2b2317;
+    --border-bright: #4a3b1f;
+    --text: #f2ead6;
+    --text-dim: #a89a7d;
+    --text-faint: #6b6152;
+    --amber: #ffb000;
+    --amber-dim: #b5801f;
+    --amber-glow: rgba(255,176,0,0.14);
+    --radius: 3px;
+    --maxw: 880px;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'JetBrains Mono', monospace;
+    font-size:15px;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* subtle CRT scanline + vignette overlay */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.012) 0px,
+      rgba(255,255,255,0.012) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events:none;
+    z-index:999;
+    mix-blend-mode:overlay;
+  }
+  body::after{
+    content:"";
+    position:fixed; inset:0;
+    background:radial-gradient(ellipse at 50% 0%, rgba(255,176,0,0.05), transparent 55%),
+               radial-gradient(ellipse at 50% 120%, rgba(0,0,0,0.6), transparent 60%);
+    pointer-events:none;
+    z-index:998;
+  }
+
+  a{ color:inherit; text-decoration:none; }
+
+  ::selection{ background:var(--amber-glow); color:var(--amber); }
+
+  /* ---------- layout shell : one long terminal window ---------- */
+  .terminal{
+    max-width:1000px;
+    margin:32px auto;
+    border:1px solid var(--border-bright);
+    border-radius:8px;
+    background:var(--bg-soft);
+    box-shadow:0 0 0 1px rgba(0,0,0,0.4), 0 40px 80px -30px rgba(0,0,0,0.8);
+    overflow:hidden;
+  }
+
+  .titlebar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 16px;
+    background:var(--panel);
+    border-bottom:1px solid var(--border);
+  }
+  .dot{ width:11px; height:11px; border-radius:50%; }
+  .dot.red{ background:#5f3a2e; }
+  .dot.yellow{ background:#5f4d2e; }
+  .dot.green{ background:#3a5f2e; }
+  .titlebar-label{
+    margin-left:8px;
+    font-size:12px;
+    color:var(--text-faint);
+    letter-spacing:0.03em;
+  }
+
+  /* file tabs nav */
+  .tabs{
+    display:flex;
+    overflow-x:auto;
+    background:var(--bg-soft);
+    border-bottom:1px solid var(--border);
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{ display:none; }
+  .tabs a{
+    flex:0 0 auto;
+    padding:10px 18px;
+    font-size:12.5px;
+    color:var(--text-faint);
+    border-right:1px solid var(--border);
+    white-space:nowrap;
+    transition:color .15s ease, background .15s ease;
+  }
+  .tabs a:hover{ color:var(--text-dim); background:rgba(255,255,255,0.02); }
+  .tabs a.active{ color:var(--amber); }
+
+  .pane{
+    padding:56px 40px;
+    max-width:var(--maxw);
+    margin:0 auto;
+  }
+  .pane + .pane{ border-top:1px dashed var(--border); }
+
+  /* prompt line convention used before each section heading */
+  .prompt{
+    display:flex;
+    align-items:baseline;
+    gap:8px;
+    font-size:13px;
+    color:var(--text-faint);
+    margin-bottom:22px;
+  }
+  .prompt .user{ color:#8fae7d; }
+  .prompt .at{ color:var(--text-faint); }
+  .prompt .host{ color:#7d9bae; }
+  .prompt .path{ color:#b79cd9; }
+  .prompt .sym{ color:var(--amber); }
+  .prompt .cmd{ color:var(--text-dim); }
+
+  h1,h2,h3{ font-weight:700; letter-spacing:-0.01em; }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top:64px; padding-bottom:64px; }
+  .hero h1{
+    font-size:clamp(28px, 5vw, 44px);
+    color:var(--text);
+    display:inline-block;
+    overflow:hidden;
+    white-space:nowrap;
+    border-right:3px solid var(--amber);
+    width:19ch;
+    animation:typing 1.6s steps(19,end) forwards, caret .8s step-end infinite;
+  }
+  @keyframes typing{ from{ width:0 } to{ width:19ch } }
+  @keyframes caret{ 50%{ border-color:transparent } }
+
+  .hero .role{
+    margin-top:18px;
+    font-size:15px;
+    color:var(--amber);
+    font-weight:600;
+  }
+  .hero .tagline{
+    margin-top:10px;
+    color:var(--text-dim);
+    font-size:14px;
+  }
+  .hero .cta{
+    margin-top:32px;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    padding:10px 20px;
+    border:1px solid var(--border-bright);
+    border-radius:var(--radius);
+    font-size:13px;
+    color:var(--text-dim);
+    transition:all .15s ease;
+  }
+  .btn:hover{ border-color:var(--amber-dim); color:var(--amber); background:var(--amber-glow); }
+  .btn.primary{
+    background:var(--amber);
+    color:#1a1206;
+    border-color:var(--amber);
+    font-weight:700;
+  }
+  .btn.primary:hover{ background:#ffc23a; color:#1a1206; }
+
+  /* ---------- about ---------- */
+  .about p{ color:var(--text-dim); max-width:640px; }
+  .about p + p{ margin-top:14px; }
+  .about strong{ color:var(--text); font-weight:600; }
+
+  /* ---------- stack ---------- */
+  .stack-block{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:22px 24px;
+    font-size:13.5px;
+    overflow-x:auto;
+  }
+  .stack-key{ color:#7d9bae; }
+  .stack-punc{ color:var(--text-faint); }
+  .stack-row{ margin-left:20px; }
+  .chip-line{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 14px 20px; }
+  .chip{
+    padding:4px 10px;
+    background:var(--bg-soft);
+    border:1px solid var(--border);
+    border-radius:2px;
+    font-size:12px;
+    color:var(--text-dim);
+  }
+
+  .learning-list{ margin-top:36px; list-style:none; }
+  .learning-list li{
+    color:var(--text-dim);
+    font-size:13.5px;
+    padding:6px 0;
+    display:flex;
+    gap:10px;
+  }
+  .learning-list .box{ color:var(--amber-dim); }
+
+  /* ---------- experience ---------- */
+  .log-entry{
+    border-left:2px solid var(--border-bright);
+    padding-left:20px;
+    margin-bottom:34px;
+    position:relative;
+  }
+  .log-entry::before{
+    content:"";
+    position:absolute;
+    left:-5px; top:4px;
+    width:8px; height:8px;
+    border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 8px var(--amber);
+  }
+  .log-entry .tag{
+    font-size:11.5px;
+    color:var(--amber-dim);
+    letter-spacing:0.05em;
+  }
+  .log-entry h3{
+    margin-top:6px;
+    font-size:17px;
+    color:var(--text);
+  }
+  .log-entry ul{ margin:10px 0 8px 18px; color:var(--text-dim); font-size:13.5px; }
+  .log-entry li{ margin-bottom:4px; }
+  .log-entry .link{
+    display:inline-block;
+    margin-top:6px;
+    font-size:12.5px;
+    color:#7d9bae;
+    border-bottom:1px dashed transparent;
+  }
+  .log-entry .link:hover{ color:var(--amber); border-color:var(--amber); }
+
+  /* ---------- projects ---------- */
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:24px 26px;
+    margin-bottom:20px;
+  }
+  .card .path-line{
+    font-size:12px;
+    color:var(--text-faint);
+    margin-bottom:10px;
+  }
+  .card .path-line span{ color:#7d9bae; }
+  .card h3{ font-size:18px; color:var(--text); margin-bottom:8px; }
+  .card p.desc{ color:var(--text-dim); font-size:13.5px; margin-bottom:14px; }
+  .card ul{ margin-left:18px; color:var(--text-dim); font-size:13px; }
+  .card li{ margin-bottom:5px; }
+  .card .link{
+    display:inline-block;
+    margin-top:14px;
+    font-size:12.5px;
+    color:var(--amber-dim);
+  }
+  .card .link:hover{ color:var(--amber); }
+
+  /* ---------- goals ---------- */
+  .goals{ margin-top:8px; }
+  .goals li{
+    list-style:none;
+    color:var(--text-dim);
+    font-size:13.5px;
+    padding:6px 0;
+    display:flex;
+    gap:10px;
+  }
+  .goals .box{ color:var(--text-faint); }
+
+  /* ---------- contact ---------- */
+  .contact-list{ margin-top:8px; }
+  .contact-row{
+    display:flex;
+    gap:10px;
+    font-size:14px;
+    padding:9px 0;
+    border-bottom:1px solid var(--border);
+    color:var(--text-dim);
+    align-items:baseline;
+  }
+  .contact-row:last-child{ border-bottom:none; }
+  .contact-row .sym{ color:var(--amber); }
+  .contact-row a:hover{ color:var(--amber); }
+
+  footer{
+    padding:26px 40px 34px;
+    font-size:12px;
+    color:var(--text-faint);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  footer .blink{
+    display:inline-block;
+    width:8px; height:14px;
+    background:var(--amber);
+    margin-left:4px;
+    animation:caret 1s step-end infinite;
+    vertical-align:middle;
+  }
+
+  @media (max-width:640px){
+    .terminal{ margin:0; border-radius:0; border-left:none; border-right:none; }
+    .pane{ padding:40px 22px; }
+    .hero h1{ width:16ch; font-size:26px; }
+    footer{ flex-direction:column; padding:22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="terminal">
+
+  <div class="titlebar">
+    <span class="dot red"></span>
+    <span class="dot yellow"></span>
+    <span class="dot green"></span>
+    <span class="titlebar-label">guest@harsh — portfolio — 100×34</span>
+  </div>
+
+  <nav class="tabs">
+    <a href="#top" class="active">whoami</a>
+    <a href="#about">about.md</a>
+    <a href="#stack">stack.json</a>
+    <a href="#experience">experience.log</a>
+    <a href="#projects">projects/</a>
+    <a href="#goals">2026_goals.md</a>
+    <a href="#contact">contact.sh</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="pane hero" id="top">
+    <div class="prompt">
+      <span class="user">guest</span><span class="at">@</span><span class="host">harsh</span><span class="sym">:</span><span class="path">~</span><span class="sym">$</span>
+      <span class="cmd">whoami</span>
+    </div>
+    <h1>Harsh Verdhan Singh</h1>
+    <div class="role">Full Stack Web &amp; Flutter Developer · AI &amp; ML Student · Open Source Contributor</div>
+    <p class="tagline">Building scalable software — exploring system design — passionate about AI-powered applications.</p>
+    <div class="cta">
+      <a class="btn primary" href="#projects">view projects</a>
+      <a class="btn" href="#contact">get in touch</a>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="pane about" id="about">
+    <div class="prompt">
+      <span class="user">guest</span><span class="at">@</span><span class="host">harsh</span><span class="sym">:</span><span class="path">~</span><span class="sym">$</span>
+      <span class="cmd">cat about.md</span>
+    </div>
+    <p>I'm a final-year <strong>B.Tech CSE (AI &amp; Machine Learning)</strong> student at <strong>Pranveer Singh Institute of Technology, Kanpur</strong>.</p>
+    <p>I enjoy building scalable applications across <strong>Web</strong>, <strong>Mobile</strong>, and <strong>Backend</strong>, while continuously sharpening my understanding of software engineering, distributed systems, and system architecture.</p>
+    <p>Currently seeking opportunities to contribute to enterprise-grade software while learning from experienced engineering teams.</p>
+  </section>
+
+  <!-- STACK -->
+  <section class="pane" id="stack">
+    <div class="prompt">
+      <span class="user">guest</span><span class="at">@</span><span class="host">harsh</span><span class="sym">:</span><span class="path">~</span><span class="sym">$</span>
+      <span class="cmd">cat stack.json</span>
+    </div>
+    <div class="stack-block">
+      <div class="stack-punc">{</div>
+
+      <div class="stack-row"><span class="stack-key">"languages"</span><span class="stack-punc">:</span></div>
+      <div class="chip-line">
+        <span class="chip">JavaScript</span><span class="chip">Python</span><span class="chip">Dart</span><span class="chip">Java</span>
+      </div>
+
+      <div class="stack-row"><span class="stack-key">"frontend"</span><span class="stack-punc">:</span></div>
+      <div class="chip-line">
+        <span class="chip">HTML5</span><span class="chip">CSS3</span><span class="chip">Bootstrap</span><span class="chip">Tailwind CSS</span><span class="chip">React</span><span class="chip">Vite</span>
+      </div>
+
+      <div class="stack-row"><span class="stack-key">"backend"</span><span class="stack-punc">:</span></div>
+      <div class="chip-line">
+        <span class="chip">Node.js</span><span class="chip">Express.js</span><span class="chip">Spring Boot</span><span class="chip">Firebase</span>
+      </div>
+
+      <div class="stack-row"><span class="stack-key">"database"</span><span class="stack-punc">:</span></div>
+      <div class="chip-line">
+        <span class="chip">PostgreSQL</span><span class="chip">MongoDB</span>
+      </div>
+
+      <div class="stack-row"><span class="stack-key">"mobile"</span><span class="stack-punc">:</span></div>
+      <div class="chip-line">
+        <span class="chip">Flutter</span>
+      </div>
+
+      <div class="stack-row"><span class="stack-key">"deployment"</span><span class="stack-punc">:</span></div>
+      <div class="chip-line" style="margin-bottom:0;">
+        <span class="chip">Git</span><span class="chip">GitHub</span><span class="chip">Vercel</span><span class="chip">Netlify</span><span class="chip">Render</span>
+      </div>
+
+      <div class="stack-punc">}</div>
+    </div>
+
+    <div class="prompt" style="margin-top:40px;">
+      <span class="user">guest</span><span class="at">@</span><span class="host">harsh</span><span class="sym">:</span><span class="path">~</span><span class="sym">$</span>
+      <span class="cmd">cat currently_learning.txt</span>
+    </div>
+    <ul class="learning-list">
+      <li><span class="box">[ ]</span> System design</li>
+      <li><span class="box">[ ]</span> Spring Boot</li>
+      <li><span class="box">[ ]</span> Docker</li>
+      <li><span class="box">[ ]</span> Kubernetes</li>
+      <li><span class="box">[ ]</span> AI-powered application development</li>
+      <li><span class="box">[ ]</span> Advanced Flutter architecture</li>
+      <li><span class="box">[ ]</span> Scalable backend engineering</li>
+    </ul>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section class="pane" id="experience">
+    <div class="prompt">
+      <span class="user">guest</span><span class="at">@</span><span class="host">harsh</span><span class="sym">:</span><span class="path">~</span><span class="sym">$</span>
+      <span class="cmd">tail -f experience.log</span>
+    </div>
+
+    <div class="log-entry">
+      <div class="tag">[2025 — PRESENT]</div>
+      <h3>Co-Founder · MeetKats</h3>
+      <ul>
+        <li>Building an AI-powered networking platform for students.</li>
+        <li>Designing scalable backend architecture and smart networking workflows.</li>
+        <li>Leading product development from ideation to implementation.</li>
+      </ul>
+      <a class="link" href="https://github.com/MeetKatsCreations" target="_blank" rel="noopener">→ github.com/MeetKatsCreations</a>
+    </div>
+
+    <div class="log-entry">
+      <div class="tag">[ONGOING]</div>
+      <h3>Flutter Developer · Flutter Kanpur</h3>
+      <ul>
+        <li>Contributing to production Flutter applications.</li>
+        <li>Developing scalable UI components and application features.</li>
+        <li>Collaborating with developers through GitHub workflows and code reviews.</li>
+      </ul>
+      <a class="link" href="https://github.com/Flutter-Kanpur" target="_blank" rel="noopener">→ github.com/Flutter-Kanpur</a>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="pane" id="projects">
+    <div class="prompt">
+      <span class="user">guest</span><span class="at">@</span><span class="host">harsh</span><span class="sym">:</span><span class="path">~</span><span class="sym">$</span>
+      <span class="cmd">ls projects/</span>
+    </div>
+
+    <div class="card">
+      <div class="path-line"><span>~/projects/</span>movie-mate</div>
+      <h3>🎬 Movie Mate</h3>
+      <p class="desc">A cross-platform Flutter application for movie discovery with Firebase-powered authentication and cloud data management.</p>
+      <ul>
+        <li>Firebase Authentication and Firestore-backed data layer.</li>
+        <li>Third-party REST APIs for dynamic movie recommendations.</li>
+        <li>Real-time watchlist built on Firestore Streams.</li>
+        <li>Scalable architecture with reusable widgets and clean state management.</li>
+        <li>Cloudinary image storage and profile customization.</li>
+        <li>Responsive UI with animations and custom movie detail screens.</li>
+      </ul>
+      <a class="link" href="https://github.com/harshverdhan312/MovieMate" target="_blank" rel="noopener">→ github.com/harshverdhan312/MovieMate</a>
+    </div>
+
+    <div class="card">
+      <div class="path-line"><span>~/contributions/</span>flutter-kanpur-app</div>
+      <h3>🌟 Flutter Kanpur — Open Source</h3>
+      <p class="desc">Contributing to a production Flutter application alongside the Flutter Kanpur community — pull requests, code reviews, and feature implementations.</p>
+      <ul>
+        <li>Static informational screens</li>
+        <li>UI improvements</li>
+        <li>Feature development</li>
+        <li>Bug fixes</li>
+        <li>Flutter best practices</li>
+      </ul>
+      <a class="link" href="https://github.com/Flutter-Kanpur/Flutter-Kanpur-App-2.0" target="_blank" rel="noopener">→ Flutter-Kanpur/Flutter-Kanpur-App-2.0</a>
+    </div>
+  </section>
+
+  <!-- GOALS -->
+  <section class="pane" id="goals">
+    <div class="prompt">
+      <span class="user">guest</span><span class="at">@</span><span class="host">harsh</span><span class="sym">:</span><span class="path">~</span><span class="sym">$</span>
+      <span class="cmd">cat 2026_goals.md</span>
+    </div>
+    <ul class="goals">
+      <li><span class="box">[ ]</span> Contribute to impactful open source projects</li>
+      <li><span class="box">[ ]</span> Build scalable full-stack applications</li>
+      <li><span class="box">[ ]</span> Strengthen system design fundamentals</li>
+      <li><span class="box">[ ]</span> Learn cloud-native development</li>
+      <li><span class="box">[ ]</span> Secure a software engineering internship / full-time role</li>
+      <li><span class="box">[ ]</span> Keep building products that solve real-world problems</li>
+    </ul>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="pane" id="contact">
+    <div class="prompt">
+      <span class="user">guest</span><span class="at">@</span><span class="host">harsh</span><span class="sym">:</span><span class="path">~</span><span class="sym">$</span>
+      <span class="cmd">./contact.sh</span>
+    </div>
+    <p style="color:var(--text-dim); font-size:13.5px; margin-bottom:18px;">Always up for discussing software engineering, Flutter, AI, startups, and open source. Reach out any time.</p>
+    <div class="contact-list">
+      <div class="contact-row"><span class="sym">→</span><a href="https://www.linkedin.com/in/harshsage" target="_blank" rel="noopener">linkedin.com/in/harshsage</a></div>
+      <div class="contact-row"><span class="sym">→</span><a href="https://instagram.com/harshsage.dev" target="_blank" rel="noopener">instagram.com/harshsage.dev</a></div>
+      <div class="contact-row"><span class="sym">→</span><a href="https://x.com/harshsagee" target="_blank" rel="noopener">x.com/harshsagee</a></div>
+      <div class="contact-row"><span class="sym">→</span><a href="mailto:harshverdhansingh1@gmail.com">harshverdhansingh1@gmail.com</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Harsh Verdhan Singh</span>
+    <span>process exit code 0 — built with HTML &amp; CSS<span class="blink"></span></span>
+  </footer>
+
+</div>
+
+</body>
+</html>
